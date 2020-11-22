@@ -11,9 +11,6 @@ import org.apache.kafka.common.serialization.StringSerializer
 import monix.execution.Scheduler.Implicits.global
 import monix.reactive.{Observable, OverflowStrategy}
 
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-
 object App {
 
   import Implicits._
@@ -26,17 +23,20 @@ object App {
     serializer,
     serializer
   )
-  val actorSystem = ActorSystem("Test")
-  implicit val materializer = Materializer.matFromSystem(actorSystem)
+  //implicit val materializer = Materializer.matFromSystem(ActorSystem("QuickStart"))
 
   def main(args: Array[String]): Unit = {
 
-    val producer = Producer0FireAndForget.apply[Task, String, String](config)
-    val future = Source(0 to 1000)
+    val producer = Producer5PureFuture.apply[Task, String, String](config)
+    val runner = Observable
+      .fromIterable(0 to 1000)
       .map(i => new ProducerRecord[String, String](topicName, s"key $i", s"value $i"))
-      .map(producerRecord => producer.produce(producerRecord))
-      .run()
+      .mapEval(producerRecord => producer.produce(producerRecord))
+      .mapParallelOrdered(100) { deferred => deferred.get }
+      .flatTap(meta => Observable.delay(println(meta)))
+      .completedL
 
-    future >> actorSystem.terminate()
+    runner.void
+      .runSyncUnsafe()
   }
 }
