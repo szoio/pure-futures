@@ -26,14 +26,17 @@ object App {
     serializer,
     serializer
   )
-  implicit val materializer = Materializer.matFromSystem(ActorSystem("QuickStart"))
+  val actorSystem = ActorSystem("Test")
+  implicit val materializer = Materializer.matFromSystem(actorSystem)
 
   def main(args: Array[String]): Unit = {
 
-    val producer = Producer1Id.apply[Task, String, String](config)
-    Source(0 to 1000)
+    val producer = Producer0FireAndForget.apply[Task, String, String](config)
+    val future = Source(0 to 1000)
       .map(i => new ProducerRecord[String, String](topicName, s"key $i", s"value $i"))
       .map(producerRecord => producer.produce(producerRecord))
-      .run
+      .run()
+
+    future >> actorSystem.terminate()
   }
 }
