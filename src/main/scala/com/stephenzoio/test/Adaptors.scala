@@ -13,4 +13,14 @@ trait Adaptors {
     }
   }
 
+  def kafkaCallbackAdaptorF[F: Unsafe](cb: CallbackF[F, RecordMetadata]): kafka.Callback = (metadata: RecordMetadata, exception: Exception) => {
+    Unsafe[F].unsafeRunSync {
+      exception match {
+        case null =>
+          cb.apply(Right(metadata))
+        case error =>
+          cb.apply(Left(error))
+      }
+    }
+  }
 }
