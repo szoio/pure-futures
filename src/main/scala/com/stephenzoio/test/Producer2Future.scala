@@ -19,14 +19,7 @@ object Producer2Future {
     (record: ProducerRecord[K, V]) => {
       val promise = Promise[RecordMetadata]()
 
-      val callback: kafka.Callback = (metadata, exception) => {
-        exception match {
-          case null =>
-            promise.success(metadata)
-          case error =>
-            promise.failure(error)
-        }
-      }
+      val callback: kafka.Callback = ???
 
       kafkaProducer.send(record, callback)
       promise.future
