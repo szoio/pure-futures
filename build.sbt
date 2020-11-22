@@ -2,7 +2,7 @@ import sbt._
 
 lazy val fp1 = (project in file(".")).
   settings (
-    name := "functional-futures",
+    name := "pure-future",
     organization := "com.stephenzoio",
     version := "0.1-SNAPSHOT",
     scalaVersion := "2.13.3"
