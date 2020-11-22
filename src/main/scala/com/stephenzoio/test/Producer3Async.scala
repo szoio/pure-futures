@@ -17,6 +17,7 @@ object Producer3Async {
 
     (record: ProducerRecord[K, V]) => {
       val result: F[RecordMetadata] = Async[F].async[RecordMetadata] { cb: Callback[RecordMetadata] =>
+
         val kafkaCallback: kafka.Callback = (metadata: RecordMetadata, exception: Exception) => {
           exception match {
             case null =>
