@@ -6,13 +6,13 @@ import org.apache.kafka.clients.{producer => kafka}
 import scala.concurrent.{Future, Promise}
 import scala.jdk.CollectionConverters._
 
-trait Producer2Future[F[_], K, V] {
+trait Producer2Future[K, V] {
   def produce(producerRecord: ProducerRecord[K, V]): Future[RecordMetadata]
 }
 
 object Producer2Future {
 
-  def apply[F[_], K, V](spec: Config[K, V]): Producer2Future[F, K, V] = {
+  def apply[K, V](spec: Config[K, V]): Producer2Future[K, V] = {
 
     val kafkaProducer = new KafkaProducer[K, V](spec.props.asJava, spec.keySerializer, spec.valueSerializer)
 
