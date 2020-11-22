@@ -5,5 +5,5 @@ trait Types {
   type Attempt[A] = Either[Throwable, A]
   type Callback[-A] = Either[Throwable, A] => Unit
 
-  type CallbackAdaptor[A] = Callback[A] => kafka.Callback
+  type KafkaCallbackAdaptor = Callback[kafka.RecordMetadata] => kafka.Callback
 }

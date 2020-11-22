@@ -29,8 +29,9 @@ trait PureFuture[F[_], A] { self =>
 
 object PureFuture {
 
-  def apply[F[_]: Concurrent: MonadError[*[_], Throwable], A](callbackHandler: CallbackHandlerF[F, A])
-  : F[PureFuture[F, A]] = {
+  def apply[F[_]: Concurrent: MonadError[*[_], Throwable], A](
+      callbackHandler: CallbackHandlerF[F, A]
+  ): F[PureFuture[F, A]] = {
     Deferred.tryable[F, Either[Throwable, A]].flatMap { deferred =>
       val completer: CallbackF[F, A] = deferred.complete
 
