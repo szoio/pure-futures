@@ -9,7 +9,7 @@ import monix.eval.{Fiber, Task, TaskApp}
 import org.apache.kafka.clients.producer.{ProducerConfig, ProducerRecord, RecordMetadata}
 import org.apache.kafka.common.serialization.StringSerializer
 import monix.execution.Scheduler.Implicits.global
-import monix.reactive.{Observable, OverflowStrategy}
+import monix.reactive.Observable
 
 object App {
 
