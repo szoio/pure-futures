@@ -25,7 +25,7 @@ object App {
   )
   //implicit val materializer = Materializer.matFromSystem(ActorSystem("QuickStart"))
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit = time {
 
     val producer = Producer5PureFuture.apply[Task, String, String](config)
     val runner = Observable
@@ -38,5 +38,12 @@ object App {
 
     runner.void
       .runSyncUnsafe()
+  }
+
+  private def time(thunk: => Unit): Unit = {
+    val start = System.currentTimeMillis()
+    thunk
+    val end = System.currentTimeMillis()
+    println(s"Executed in ${end - start} milliseconds")
   }
 }
