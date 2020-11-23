@@ -35,5 +35,11 @@ object Producer4Deferred {
           .map(_ => deferred)
       }
     }
+
+//      (record: ProducerRecord[K, V]) => {
+//        PureFuture.apply[F, RecordMetadata] { callbackF =>
+//          Sync[F].delay(kafkaProducer.send(record, kafkaCallbackAdaptorF[F].apply(callbackF)))
+//        }
+//      }
   }
 }
