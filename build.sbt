@@ -82,7 +82,7 @@ libraryDependencies ++= Seq(
   // type class derivation
   "org.typelevel" %% "simulacrum" % "1.0.0",
   // Kafka
-  "org.apache.kafka" % "kafka-clients" % "2.4.0",
+  "org.apache.kafka" % "kafka-clients" % "2.8.0",
   // Embed Li Haoyi's Ammonite repl in your test project
   "com.lihaoyi" %% "ammonite" % AmmoniteVersion % Test cross CrossVersion.full,
   "org.ajbrown" % "name-machine" % "1.0.0" % Test,

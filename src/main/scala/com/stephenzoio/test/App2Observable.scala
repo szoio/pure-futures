@@ -11,7 +11,7 @@ import org.apache.kafka.common.serialization.StringSerializer
 import monix.execution.Scheduler.Implicits.global
 import monix.reactive.Observable
 
-object App {
+object AppPureFuture {
 
   import Implicits._
   val topicName = "test.topic"
@@ -23,22 +23,24 @@ object App {
     serializer,
     serializer
   )
-  //implicit val materializer = Materializer.matFromSystem(ActorSystem("QuickStart"))
+  //implicit val materializer = Materializer.m
+  // atFromSystem(ActorSystem("QuickStart"))
+  def main(args: Array[String]): Unit =
+    time {
 
-  def main(args: Array[String]): Unit = time {
+      val producer = Producer2Future.apply[String, String](config)
+      val runner = Observable
+        .fromIterable(0 to 1000000)
+        .map(i => new ProducerRecord[String, String](topicName, s"key $i", s"value $i"))
+        .mapEval(producerRecord => Task(producer.produce(producerRecord)))
+        .mapParallelOrdered(1000) { x => Task.deferFuture(x) }
+        .completedL
 
-    val producer = Producer5PureFuture.apply[Task, String, String](config)
-    val runner = Observable
-      .fromIterable(0 to 1000)
-      .map(i => new ProducerRecord[String, String](topicName, s"key $i", s"value $i"))
-      .mapEval(producerRecord => producer.produce(producerRecord))
-      .mapParallelOrdered(100) { deferred => deferred.get }
-      .flatTap(meta => Observable.delay(println(meta)))
-      .completedL
-
-    runner.void
-      .runSyncUnsafe()
-  }
+      time {
+        runner.void
+          .runSyncUnsafe()
+      }
+    }
 
   private def time(thunk: => Unit): Unit = {
     val start = System.currentTimeMillis()
